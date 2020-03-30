@@ -1,0 +1,172 @@
+﻿@using X.PagedList.Mvc;
+@model X.PagedList.PagedList<CrudPaginacao.Models.Pessoa>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@if (TempData["sucesso"] != null)
+{
+    <div class=" alert alert-success">
+        @TempData["sucesso"]
+    </div>
+
+}
+
+
+<h2>Index</h2>
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-success">
+        <span class="glyphicon glyphicon-plus"></span> Adicionar
+    </a>
+
+    <a href="@Url.Action("Index")" class="btn btn-danger">
+        <span class="glyphicon glyphicon-star"></span> Todos
+    </a>
+</p>
+
+<div class="pb-2">
+
+    <form class="form-inline text-right ">
+
+        <div class="form-group   ">
+            <label class="sr-only margin-bottom-2">Nome</label>
+            <input type="text" class="form-control mb-2 " name="Nome" placeholder="Nome">
+        </div>
+        <button type="submit" class="btn btn-primary " id="btnPesquisa"><sapn class="glyphicon glyphicon-search"></sapn> </button>
+    </form>
+
+</div>
+
+<table class="table pt-2">
+    <tr>
+        <th>
+            Nome
+        </th>
+        <th>
+            Cpf
+        </th>
+        <th>
+            Email
+        </th>
+
+
+
+        <th>
+            Ativo
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cpf)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Ativo)
+            </td>
+            <td>
+                @Html.ActionLink(" Editar", "Edit", new { id = item.Id }, new { @class = " text-white btn btn-warning glyphicon glyphicon-pencil" })
+                <a href="#" class="btn btn-primary btnDetails " data-value="@item.Id"><span class="glyphicon glyphicon-list"></span> Detalhes</a>
+                <a href="#" class="btn btn-danger btnDelete" data-value="@item.Id"><span class="glyphicon glyphicon-trash"></span> Apagar</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+<div class="row">
+
+    <div class="col-md-8">
+
+
+        @Html.PagedListPager(Model, pagina => Url.Action("Index", new { pagina }))
+    </div>
+    <div class="col-md-4">
+        <span class="pull-right">
+            Listando registros de @Model.FirstItemOnPage
+            a @Model.LastItemOnPage de um total de @Model.TotalItemCount
+        </span>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div id="conteudoModal">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts   {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $(".btnDetails").click(function () {
+
+                var id = $(this).data("value");
+
+                $("#conteudoModal").load("/Pessoas/Details/" + id, function () {
+
+                    $("#myModal").modal("show");
+                });
+
+            })
+        })
+
+
+
+        $(document).ready(function () {
+
+            $(".btnDelete").click(function () {
+
+                var id = $(this).data("value");
+
+                $("#conteudoModal").load("/Pessoas/Delete/" + id, function () {
+
+                    $("#myModal").modal("show");
+                });
+
+            })
+        })
+
+
+
+
+        function pesquisar() {
+            $("#btnPesquisa").load("@Url.Action("Index")", $("form").serialize());
+    };
+
+    </script>
+
+
+
+
+}
+
